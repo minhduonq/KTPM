@@ -1,0 +1,27 @@
+version: '3'
+services:
+  api-fe-rate:
+    build:
+      context: ./api-fe-rate
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./api-fe-rate:/usr/src/app
+    networks:
+      - mynetwork
+
+  api-gold-price:
+    build:
+      context: ./api-gold-price
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./api-gold-price:/usr/src/app
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
