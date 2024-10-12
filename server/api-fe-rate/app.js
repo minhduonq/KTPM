@@ -13,7 +13,7 @@ app.use(FERrateRoute);
 
 // Khởi động server
 app.listen(port, () => {
-  console.log(`Gold Price API running on port ${port}`);
+  console.log(`FE Rate API running on port ${port}`);
 });
 
 // docker-compose up --build
