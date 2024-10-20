@@ -9,7 +9,7 @@ services:
     volumes:
       - ./api-fe-rate:/usr/src/app
     networks:
-      - mynetwork
+      - mynetwork 
 
   api-gold-price:
     build:
@@ -21,29 +21,17 @@ services:
       - ./api-gold-price:/usr/src/app
     networks:
       - mynetwork
-
-  prometheus:
-    image: prom/prometheus
+      
+  container-monitor:
+    build:
+      context: ./container-monitor
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003" 
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - mynetwork
-
-  node_exporter:
-    image: prom/node-exporter
-    ports:
-      - "9100:9100"
-    networks:
-      - mynetwork
-    
-  grafana:
-    image: grafana/grafana
-    ports:
-    - "3000:3000"
-    networks:
-    - mynetwork
 
 networks:
   mynetwork:

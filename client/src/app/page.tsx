@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import GoldPrice from "@/components/goldPrice";
 import FERATE from "@/components/feRate";
-import { log } from "console";
 
 //const Abc = dynamic(() => import('../components/Abc'), { ssr: false });
 export default function Home() {
@@ -37,6 +36,9 @@ export default function Home() {
       <div>
         <Button onClick={handleCLick_FE}>Click to Get Foreign Currency Here</Button>
         {showFERate && <FERATE/>}
+      </div>
+      <div>
+        <Button><a href="/monitor">Monitor</a></Button>
       </div>
     </div>
   )
