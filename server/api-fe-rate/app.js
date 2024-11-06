@@ -17,4 +17,4 @@ app.listen(port, () => {
 });
 
 // docker-compose up --build
- 
+// docker-compose up -d (second time)
