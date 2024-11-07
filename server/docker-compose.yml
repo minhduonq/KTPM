@@ -1,4 +1,34 @@
 services:
+  # envoy:
+  #   image: envoyproxy/envoy:v1.27.0
+  #   volumes:
+  #     - ./ambassador/envoy.yaml:/etc/envoy/envoy.yaml
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - mynetwork
+
+  # ambassador:
+  #   image: quay.io/datawire/ambassador:latest
+  #   container_name: ambassador
+  #   ports:
+  #     - "8080:8080"  # Để truy cập Ambassador trên cổng 8080
+  #   volumes:
+  #     - ./ambassador:/ambassador  # Mount cấu hình của Ambassador vào container
+  #   environment:
+  #     - AMBASSADOR_ID=default
+
+  # api:
+  #   build: .
+  #   depends_on:
+  #     - redis
+  #   environment:
+  #     - REDIS_URL=redis://redis:6379
+  # redis:
+  #   image: "redis:alpine"
+  #   ports:
+  #     - "6379:6379"
+
   api-fe-rate:
     build:
       context: ./api-fe-rate
@@ -7,6 +37,8 @@ services:
       - "5000:5000"
     volumes:
       - ./api-fe-rate:/usr/src/app
+    networks:
+      - mynetwork
   
   api-gold-price:
     build:
@@ -16,6 +48,8 @@ services:
       - "4000:4000"
     volumes:
       - ./api-gold-price:/usr/src/app
+    networks:
+      - mynetwork
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -72,6 +106,8 @@ services:
 
 networks:
   monitoring:
+    driver: bridge
+  mynetwork:
     driver: bridge
 
 volumes:
