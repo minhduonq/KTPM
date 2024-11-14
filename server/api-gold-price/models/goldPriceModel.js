@@ -1,4 +1,3 @@
-/*
 const db = require('../config/firebase');
 const { doc, updateDoc, collection } = require('firebase/firestore');
 
@@ -7,7 +6,7 @@ module.exports = class goldPricetoDB {
     try {
       // Lấy tham chiếu tới document trong collection 'accounts'
       const accountRef = doc(collection(db, 'accounts'), userID.toString());
-      
+
       // Cập nhật trường 'latest_Gold_Price' trong document
       await updateDoc(accountRef, {
         latest_Gold_Price: goldPrice
@@ -19,4 +18,3 @@ module.exports = class goldPricetoDB {
     }
   }
 };
-*/

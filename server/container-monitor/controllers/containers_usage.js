@@ -92,3 +92,55 @@ exports.Containers_Usage_NO_Stream = async (req, res) => {
     const metrics = await getContainerMetrics();
     res.json(metrics)
 }
+
+// const Docker = require('dockerode');
+// const docker = new Docker();
+
+// exports.Containers_Usage_Stream = async (req, res) => {
+//     // Đảm bảo chỉ thiết lập headers một lần
+//     res.writeHead(200, {
+//         'Content-Type': 'text/event-stream',
+//         'Cache-Control': 'no-cache',
+//         'Connection': 'keep-alive'
+//     });
+
+//     const activeStreams = [];
+
+//     try {
+//         const containers = await docker.listContainers();
+        
+//         // Sử dụng Promise.all để xử lý các stream đồng thời
+//         await Promise.all(containers.map(async (container) => {
+//             const containerInstance = docker.getContainer(container.Id);
+//             const statsStream = await containerInstance.stats({ stream: true });
+
+//             statsStream.on('data', (data) => {
+//                 const stats = JSON.parse(data.toString());
+//                 const usage = {
+//                     containerId: container.Id,
+//                     name: container.Names[0].replace('/', ''),
+//                     cpuUsage: stats.cpu_stats.cpu_usage.total_usage,
+//                     memoryUsage: stats.memory_stats.usage
+//                 };
+//                 res.write(`data: ${JSON.stringify(usage)}\n\n`);
+//             });
+
+//             statsStream.on('end', () => {
+//                 const index = activeStreams.indexOf(statsStream);
+//                 if (index !== -1) {
+//                     activeStreams.splice(index, 1);
+//                 }
+//             });
+
+//             activeStreams.push(statsStream);
+//         }));
+//     } catch (error) {
+//         console.error('Error while fetching container usage:', error);
+//         res.status(500).json({ error: 'Failed to fetch container usage' });
+//     }
+
+//     req.on('close', () => {
+//         activeStreams.forEach((stream) => stream.destroy());
+//         res.end();
+//     });
+// };

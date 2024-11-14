@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import Sidebar from '@/components/navbar';
 import GoldPrice from '@/components/goldPrice';
 import FERATE from '@/components/feRate';
-
+import Monitor from '../monitor/page';
+import ContainerStatus from "@/components/ContainerStatus";
+import EndpointStatus from "@/components/EndpointStatus";
 function Dashboard() {
     const [selectedOption, setSelectedOption] = useState('Dashboard');
 
@@ -13,12 +15,12 @@ function Dashboard() {
                 return <GoldPrice />;
             case 'FeRate':
                 return <FERATE />;
-            case 'GoldPriceCheck':
-                return <div>Gold Price Check Content</div>;
-            case 'ReRateCheck':
-                return <div>Re Rate Check Content</div>;
+            case 'Endpoint Status':
+                return <EndpointStatus />;
+            case 'Container Status':
+                return <ContainerStatus />;
             case 'Monitoring':
-                return <div>Monitoring Content</div>;
+                return <Monitor />;
             default:
                 return <div>Dashboard Content</div>;
         }

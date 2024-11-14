@@ -46,10 +46,11 @@ function FERATE() {
 
     return (
         <div className='mt-8'>
-            <p className='font-bold border-b border-slate-400'>
-                Cập nhật vào: {ferate_value?.DateTime[0]}
-            </p>
-            <div style={{ overflowY: 'auto', maxHeight: '500px' }}>
+            <div style={{ overflowY: 'auto', maxHeight: '600px' }}>
+                <p className='font-bold border-b border-slate-400'>
+                    Cập nhật vào: {ferate_value?.DateTime[0]}
+                </p>
+
                 <table className='min-w-full bg-white border border-gray-200 mt-4'>
                     <thead>
                         <tr className='bg-gray-200'>
@@ -74,8 +75,9 @@ function FERATE() {
                         ))}
                     </tbody>
                 </table>
+
+                <p className='font-bold mt-4'>SOURCE: {ferate_value?.Source[0]}</p>
             </div>
-            <p className='font-bold mt-4'>SOURCE: {ferate_value?.Source[0]}</p>
         </div>
     );
 }

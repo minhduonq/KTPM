@@ -36,15 +36,15 @@ function Sidebar({ setSelectedOption }) {
                     <ul className="ml-4 mt-2 space-y-2">
                         <li
                             className="p-2 hover:bg-gray-700 cursor-pointer"
-                            onClick={() => setSelectedOption('GoldPriceCheck')}
+                            onClick={() => setSelectedOption('Endpoint Status')}
                         >
-                            Gold Price Check
+                            Endpoint Status
                         </li>
                         <li
                             className="p-2 hover:bg-gray-700 cursor-pointer"
-                            onClick={() => setSelectedOption('ReRateCheck')}
+                            onClick={() => setSelectedOption('Container Status')}
                         >
-                            Re Rate Check
+                            Container Status
                         </li>
                     </ul>
                 )}

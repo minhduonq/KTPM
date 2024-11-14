@@ -7,7 +7,7 @@ services:
       - "5000:5000"
     volumes:
       - ./api-fe-rate:/usr/src/app
-  
+
   api-gold-price:
     build:
       context: ./api-gold-price
@@ -16,6 +16,17 @@ services:
       - "4000:4000"
     volumes:
       - ./api-gold-price:/usr/src/app
+
+  container-monitor:
+    build:
+      context: ./container-monitor
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    privileged: true
+    volumes:
+      - ./container-monitor:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock
 
   node-exporter:
     image: prom/node-exporter:latest

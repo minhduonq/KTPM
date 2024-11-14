@@ -35,15 +35,16 @@ function GoldPrice() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className='mt-8 w-96'>
-      <h2 className='text-xl font-bold mb-4'>Gold Prices</h2>
+    // <div className='mt-8 w-full'>
+    <div style={{ overflowY: 'auto', maxHeight: 'full' }}>
+      <h2 className='text-xl font-bold mb-4'>Giá Vàng hôm nay</h2>
       <table className='min-w-full bg-white border border-gray-200'>
         <thead>
           <tr className='bg-gray-200'>
-            <th className='py-2 px-4 border-b'>#</th>
-            <th className='py-2 px-4 border-b'>Type</th>
-            <th className='py-2 px-4 border-b'>Buy</th>
-            <th className='py-2 px-4 border-b'>Sell</th>
+            <th className='py-2 px-4 border-b'>TT</th>
+            <th className='py-2 px-4 border-b'>Loại</th>
+            <th className='py-2 px-4 border-b'>Giá mua</th>
+            <th className='py-2 px-4 border-b'>Giá bán</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +59,7 @@ function GoldPrice() {
         </tbody>
       </table>
     </div>
+    // </div>
   );
 }
 
