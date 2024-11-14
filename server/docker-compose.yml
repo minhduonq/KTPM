@@ -1,33 +1,23 @@
 services:
-  # envoy:
-  #   image: envoyproxy/envoy:v1.27.0
-  #   volumes:
-  #     - ./ambassador/envoy.yaml:/etc/envoy/envoy.yaml
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     - mynetwork
+  ambassador:
+    build:
+      context: ./ambassador
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
 
-  # ambassador:
-  #   image: quay.io/datawire/ambassador:latest
-  #   container_name: ambassador
-  #   ports:
-  #     - "8080:8080"  # Để truy cập Ambassador trên cổng 8080
-  #   volumes:
-  #     - ./ambassador:/ambassador  # Mount cấu hình của Ambassador vào container
-  #   environment:
-  #     - AMBASSADOR_ID=default
-
-  # api:
-  #   build: .
-  #   depends_on:
-  #     - redis
-  #   environment:
-  #     - REDIS_URL=redis://redis:6379
-  # redis:
-  #   image: "redis:alpine"
-  #   ports:
-  #     - "6379:6379"
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - mynetwork
 
   api-fe-rate:
     build:
@@ -113,3 +103,4 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+  redis-data:
