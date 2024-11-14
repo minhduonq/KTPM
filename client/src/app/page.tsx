@@ -4,9 +4,30 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import GoldPrice from "@/components/goldPrice";
 import FERATE from "@/components/feRate";
+import axios from "axios";
 
 //const Abc = dynamic(() => import('../components/Abc'), { ssr: false });
 export default function Home() {
+  let isSent = false;
+  useEffect(() => {
+    const trackVisit = async () => {
+      if(!isSent) {
+        isSent = true;
+        try {
+          const response = await axios.get('http://localhost:3003/monitor/visit-tracking', {
+            withCredentials: true, // Đảm bảo cookies được gửi và nhận với request
+          });
+          console.log('Response:', response.data);
+          console.log('Cookies:', document.cookie);
+        } catch (error) {
+          console.error('Error tracking visit:', error);
+        }
+      }
+    };
+
+    trackVisit();
+  }, []);
+
   const [showGoldPrice, setShow] = useState(false);
   const [showFERate, setShowFERate] = useState(false);
   let firstClick_gp = true;

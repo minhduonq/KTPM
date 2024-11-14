@@ -1,111 +1,101 @@
 'use client'
-import  ContainerUsageStream from '@/components/usage'
+import MyCharts from "@/components/visitorChart"
+import TotalVisitors from "@/components/totalVisitors"
+import TotalVisitorsPerDay from "@/components/totalVisitPerDay"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import {database} from '../../config/db'
+import { ref, onValue } from "firebase/database";
+
+interface hourVisit {
+    hour: string,
+    visitors: number
+}
+
 
 export default function Home() {
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [dates, setDates] = useState<string[]>([]);
+    const [chartData, setChartData] = useState<hourVisit[][]>([]); 
+    const [countVisitPerDay, setVisitPerDay] = useState<number[]>([])
+    const [totalVisit, setTotalVisit] = useState(0);
+    useEffect(() => {
+        const dataRef = ref( database, '/');
+        const unsubscribe = onValue(dataRef, (snapshot) => {
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                // đưa visitData về đúng dạng như lấy từ api
+                const visitData = Object.keys(data).map(date => {
+                    const hourlyData = Object.keys(data[date]).map(hour => ({
+                      hour: hour,
+                      visitors: data[date][hour].visitors
+                    }));
+                    return { date: date, hourlyData: hourlyData };
+                });
+                // set giá trị mới cho chartData
+                const tmp_dates = visitData.map((visit: any) => visit.date);
+                setDates(tmp_dates);
 
+                let tmpChartData = [];
+                let tmpCountVisitPerDay = []; 
+                let tmp_totalVisit = 0;
+                for(let i = 0 ; i < visitData.length; i++) {
+                    let hourlyData = []
+                    let tmp_countvisit = 0;
+                    for(let y= 0; y< visitData[i].hourlyData.length; y++) {
+                        hourlyData.push(visitData[i].hourlyData[y]);
+                        tmp_countvisit += hourlyData[y].visitors;
+                    }
+                    tmpChartData.push(hourlyData);
+                    tmpCountVisitPerDay.push(tmp_countvisit);
+                    tmp_totalVisit += tmp_countvisit;
+                }
+                setChartData(tmpChartData)
+                setVisitPerDay(tmpCountVisitPerDay);
+                setTotalVisit(tmp_totalVisit);
+            } 
+        })
+        // Cleanup listener khi component bị unmount
+        return () => unsubscribe();
+    }, [])
+ 
+    const handleDateClick = (index:number) => {
+        setCurrentIndex(index)
+    }
+   
     return(
-        <div>
-              <h1>Container Usage Monitoring</h1>
-              <ContainerUsageStream />
+        <div className="flex gap-x-10 p-10">
+            <div className="h-[400px]">
+                <ScrollArea>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>DATES:</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {dates.map((d, index) => (
+                                <div key={index} className="mb-3">
+                                    <Button disabled={dates[index] === dates[currentIndex]} onClick={() => handleDateClick(index)}>{d}</Button>
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                </ScrollArea>
+            </div>
+            <div className="flex flex-col gap-y-2 w-full">
+                <div className="flex gap-x-10">
+                    <TotalVisitors visitors={totalVisit} />
+                    <TotalVisitorsPerDay visitors={countVisitPerDay[currentIndex]} date={dates[currentIndex]} />
+                </div>
+                <MyCharts date = {dates[currentIndex]} chartData = {chartData[currentIndex]}></MyCharts>
+            </div>
+           
         </div>
     )    
 }
-/*
- const [isConnected, setConnectedState] = useState(false);
-    const [containerStats, setContainerStats] = useState<{[key: string]: ContainerStats}>({});
-    const [eventSource, setEventSource] = useState<EventSource | null>(null);
-    const startMonitoring = useCallback(() => {
-        // Đóng kết nối cũ nếu tồn tại
-        if (eventSource) {
-            eventSource.close();
-        }
-
-        const newEventSource = new EventSource('http://localhost:3003/monitor/usage');
-        newEventSource.onopen = () => {
-            setConnectedState(true);
-            console.log('SSE Connection opened');
-        };
-
-        newEventSource.onmessage = (event) => {
-            try {
-              const newStats: ContainerStats = JSON.parse(event.data);
-              
-              // Giới hạn số lượng dữ liệu (VD: giữ max 50 renpm run 
-                const updatedStats = { ...prev };
-                
-                // Nếu container chưa tồn tại, thêm mới
-                if (!updatedStats[newStats.id]) {
-                  updatedStats[newStats.id] = newStats;
-                }
-      
-                return updatedStats;
-              });
-            } catch (error) {
-              console.error('Error parsing stats:', error);
-            }
-        };
-
-        newEventSource.onerror = (error) => {
-            console.error('SSE Error:', error);
-            stopMonitoring();
-        };
-        setEventSource(newEventSource);
-    }, []);
-   
-    const stopMonitoring = useCallback(() => {
-        if (eventSource) {
-          eventSource.close();
-          setEventSource(null);
-          setConnectedState(false);
-          console.log('SSE Connection closed');
-        }
-    }, [eventSource]);
-
-    // Hàm xóa toàn bộ stats
-    const clearStats = () => {
-        setContainerStats({});
-    };
-
-
-    return (
-        <div className="p-4 space-y-4">
-          <div className="flex space-x-4">
-            <Button 
-              onClick={startMonitoring}
-              disabled={isConnected}
-              className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
-            >
-              Start Monitoring
-            </Button>
-            <Button 
-              onClick={stopMonitoring}
-              disabled={!isConnected}
-              className="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50"
-            >
-              Stop Monitoring
-            </Button>
-            <Button 
-              onClick={clearStats}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Clear Stats
-            </Button>
-          </div>
-    
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Object.values(containerStats).map(container => (
-              <Card key={container.id}>
-                <CardHeader>
-                  <CardTitle>{container.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>CPU Usage: {container.cpuUsage}</p>
-                  <p>Memory: {(container.memoryUsage / 1024 / 1024).toFixed(2)} MB</p>
-                  <p>Memory Limit: {(container.memoryLimit / 1024 / 1024).toFixed(2)} MB</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      );
-*/

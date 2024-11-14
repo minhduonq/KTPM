@@ -7,6 +7,8 @@ services:
       - "5000:5000"
     volumes:
       - ./api-fe-rate:/usr/src/app
+    networks:
+      - gateway
   
   api-gold-price:
     build:
@@ -16,6 +18,33 @@ services:
       - "4000:4000"
     volumes:
       - ./api-gold-price:/usr/src/app
+    networks:
+      - gateway
+
+  container-monitor:
+    build:
+      context: ./container-monitor
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003" 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gateway
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3005:3005"
+    environment:
+      PORT: 3005
+      GOLD_SERVICE_URL: http://api-gold-price:4000
+      FOREX_SERVICE_URL: http://api-fe-rate:5000
+    depends_on:
+      - api-gold-price
+      - api-fe-rate
+    networks:
+      - gateway
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -72,6 +101,8 @@ services:
 
 networks:
   monitoring:
+    driver: bridge
+  gateway:
     driver: bridge
 
 volumes:
