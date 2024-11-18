@@ -1,4 +1,5 @@
-const redis = require('redis');
+// const redis = require('redis');
+const redisClient = require('./redis')
 const axios = require('axios');
 const winston = require('winston');
 const { performance } = require('perf_hooks');
@@ -8,15 +9,15 @@ const Service = require('./service')
 const THREE_MINUTES = 3 * 60 * 1000
 const ONE_MINUTE = 60 * 1000
 
-const REDIS_PORT = 6379
-const client = redis.createClient({
-  url: `redis://redis:${REDIS_PORT}`
-});
-client.on('error', (err) => console.log('Redis Client Error', err));
-async function connectRedis() {
-    await client.connect(); // Kết nối Redis client
-}
-connectRedis().catch(console.error);
+// const REDIS_PORT = 6379
+// const client = redis.createClient({
+//   url: `redis://redis:${REDIS_PORT}`
+// });
+// client.on('error', (err) => console.log('Redis Client Error', err));
+// async function connectRedis() {
+//     await client.connect(); // Kết nối Redis client
+// }
+// connectRedis().catch(console.error);
 
 // Cấu hình logger
 const logger = winston.createLogger({
@@ -48,10 +49,10 @@ class AmbassadorService {
         const dataToCache = (result.type === 'json') ? JSON.stringify(result.data) : result.data;
     
         // Lưu dữ liệu vào Redis với thời gian hết hạn 1 giờ
-        await client.setEx(key, Service.randomInRange(3600, 4200), dataToCache);
+        await redisClient.setEx(key, Service.randomInRange(3600, 4200), dataToCache);
     
         // Lưu thêm `fetchTime` với khóa phụ `${key}:fetchTime`
-        await client.setEx(`${key}:fetchTime`, Service.randomInRange(3600, 4200), Date.now().toString());
+        await redisClient.setEx(`${key}:fetchTime`, Service.randomInRange(3600, 4200), Date.now().toString());
     
         console.log(`Data and its fetchTime saved to Redis with key: ${key}`);
       } catch (error) {
@@ -63,7 +64,7 @@ class AmbassadorService {
     async getDataFromRedis(key) {
       try {
         // Lấy fetchTime từ Redis với khóa phụ
-        const fetchTime = await client.get(`${key}:fetchTime`);
+        const fetchTime = await redisClient.get(`${key}:fetchTime`);
         if (!fetchTime) {
           logger.info(`No fetchTime found in cache for key: ${key}`);
           return null;
@@ -76,7 +77,7 @@ class AmbassadorService {
         }
     
         // Nếu dữ liệu chưa cũ quá 1 phút, lấy dữ liệu từ Redis
-        const cachedData = await client.get(key);
+        const cachedData = await redisClient.get(key);
         if (!cachedData) {
           logger.info(`No data found in cache for key: ${key}`);
           return null;

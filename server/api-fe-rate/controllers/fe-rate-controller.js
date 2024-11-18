@@ -1,6 +1,7 @@
 //const gpModel = require('../models/fe-rate-model')
 const axios = require('axios')
 const xml2js = require('xml2js');
+const redisClient = require('../redis')
 
 const EXTERNAL_FE_URL = 'https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx'
 const AMBASSADOR_URL = `http://ambassador:8080/fetchData?url=${EXTERNAL_FE_URL}`
@@ -32,6 +33,14 @@ exports.getFERate = async (req, res, next) => {
           setTimeout(() => fetchData(retries + 1), RETRY_DELAY);
         } else {
           res.status(500).send("Error: Failed to fetch data after multiple attempts.");
+          // Nếu hết retries, lấy dữ liệu từ cache
+          // const cachedData = await redisClient.get(CACHE_KEY);
+          // if (cachedData) {
+          //   console.log("Returning cached data due to API failure.");
+          //   res.json(JSON.parse(cachedData));
+          // } else {
+          //   res.status(500).send("Error: Failed to fetch data after multiple attempts and no cached data available.");
+          // }
         }
       }
     } catch (error) {
