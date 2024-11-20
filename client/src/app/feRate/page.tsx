@@ -3,7 +3,8 @@
 'use client';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-
+import RERateVisitsChart from '@/components/FeRateVisitsChart';
+import FERateVisitsChart from '@/components/FeRateVisitsChart';
 type Exrate = {
     $: {
         CurrencyCode: string;
@@ -45,7 +46,7 @@ function FERATE() {
     if (error) return <div>{error}</div>;
 
     return (
-        <div className='mt-8'>
+        <div className='mt-8' style={{ overflowY: 'auto', maxHeight: '100vh' }}>
             <p className='font-bold border-b border-slate-400'>
                 Cập nhật vào: {ferate_value?.DateTime[0]}
             </p>
@@ -74,6 +75,9 @@ function FERATE() {
                 </tbody>
             </table>
             <p className='font-bold mt-4'>SOURCE: {ferate_value?.Source[0]}</p>
+            <div>
+                <FERateVisitsChart />
+            </div>
         </div>
     );
 }

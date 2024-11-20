@@ -1,5 +1,5 @@
 // services/goldPriceService.js
-
+/*
 const db = require('../config/firebase');
 const { doc, updateDoc, collection } = require('firebase/firestore');
 
@@ -20,3 +20,4 @@ module.exports = class goldPricetoDB {
     }
   }
 };
+*/

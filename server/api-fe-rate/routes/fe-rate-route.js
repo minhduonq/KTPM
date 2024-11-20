@@ -7,4 +7,6 @@ const router = express.Router();
 //router.post('/update-gold-price', goldPriceController.setGoldPrice)
 router.get('/', FERateController.loadMainPage)
 router.get('/api/fe-rate', FERateController.getFERate)
+//router.get('/api/fe-rate-visits', FERateController.getFERateVisits);
+
 module.exports = router;

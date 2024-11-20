@@ -56,13 +56,22 @@ const ContainerUsageStream = () => {
                         <br />
                         CPU Usage: {stats.cpuUsage}
                         <br />
-                        Memory Usage: {(stats.memoryUsage / (1024 * 1024)).toFixed(2)} MB / 
+                        Memory Usage: {(stats.memoryUsage / (1024 * 1024)).toFixed(2)} MB /
                         {(stats.memoryLimit / (1024 * 1024)).toFixed(2)} MB
                         <br />
                         Timestamp: {stats.timestamp}
                     </li>
                 ))}
             </ul>
+            <div className="mt-8">
+                <iframe
+                    src="http://localhost:3000"
+                    width="100%"
+                    height="600"
+                    frameBorder="0"
+                    allowFullScreen
+                ></iframe>
+            </div>
         </div>
     );
 };

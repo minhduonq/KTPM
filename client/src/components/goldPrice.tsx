@@ -36,15 +36,16 @@ function GoldPrice() {
 
   return (
     // <div className='mt-8 w-full'>
-    <div style={{ overflowY: 'auto', maxHeight: 'full' }}>
-      <h2 className='text-xl font-bold mb-4'>Giá Vàng hôm nay</h2>
+    <div className='px-5' style={{ overflowY: 'auto', maxHeight: 'full' }}>
+      <h2 className='text-xl font-bold mb-4'>Gold Price</h2>
+      <hr className="border-t border-gray-300 mb-4" />
       <table className='min-w-full bg-white border border-gray-200'>
         <thead>
           <tr className='bg-gray-200'>
-            <th className='py-2 px-4 border-b'>TT</th>
-            <th className='py-2 px-4 border-b'>Loại</th>
-            <th className='py-2 px-4 border-b'>Giá mua</th>
-            <th className='py-2 px-4 border-b'>Giá bán</th>
+            <th className='py-2 px-4 border-b'>#</th>
+            <th className='py-2 px-4 border-b'>Type</th>
+            <th className='py-2 px-4 border-b'>Buy price</th>
+            <th className='py-2 px-4 border-b'>Sell price</th>
           </tr>
         </thead>
         <tbody>
