@@ -12,8 +12,8 @@ const EXTERNAL_GOLD_URL = 'https://sjc.com.vn/GoldPrice/Services/PriceService.as
 const AMBASSADOR_URL = `http://ambassador:8080/fetchData?url=${EXTERNAL_GOLD_URL}`
 
 exports.getGoldPrice = async (req, res, next) => {
-    const MAX_RETRIES = 5; // Số lần thử tối đa
-    const RETRY_DELAY = 10000; // 10 giây
+    const MAX_RETRIES = 10; // Số lần thử tối đa
+    const RETRY_DELAY = 20000; // 20 giây
   
     async function fetchData(retries = 0) {
       try {

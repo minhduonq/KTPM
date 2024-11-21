@@ -6,18 +6,8 @@ const { performance } = require('perf_hooks');
 const { promisify } = require('util');
 const Service = require('./service')
 
-const THREE_MINUTES = 3 * 60 * 1000
+const TEN_MINUTES = 10 * 60 * 1000
 const ONE_MINUTE = 60 * 1000
-
-// const REDIS_PORT = 6379
-// const client = redis.createClient({
-//   url: `redis://redis:${REDIS_PORT}`
-// });
-// client.on('error', (err) => console.log('Redis Client Error', err));
-// async function connectRedis() {
-//     await client.connect(); // Kết nối Redis client
-// }
-// connectRedis().catch(console.error);
 
 // Cấu hình logger
 const logger = winston.createLogger({
@@ -36,6 +26,8 @@ class AmbassadorService {
       this.state = 'CLOSED'; // Trạng thái ban đầu
       this.failureCount = 0;
       this.successCount = 0;
+      this.openCount = 0;
+      this.maxOpenRetries = 5;
     }
 
     setUrl(url) {
@@ -61,7 +53,7 @@ class AmbassadorService {
     }    
 
     // Hàm lấy dữ liệu từ Redis, kiểm tra thời gian cache
-    async getDataFromRedis(key) {
+    async getDataFromRedis(key, expiredTime = ONE_MINUTE) {
       try {
         // Lấy fetchTime từ Redis với khóa phụ
         const fetchTime = await redisClient.get(`${key}:fetchTime`);
@@ -71,7 +63,9 @@ class AmbassadorService {
         }
     
         // Kiểm tra nếu dữ liệu đã cũ quá 1 phút thì thôi lấy mới
-        if (Date.now() - parseInt(fetchTime, 10) > ONE_MINUTE) {
+        const elapsedTime = Date.now() - parseInt(fetchTime, 10);
+        logger.info(`Latest data for key: ${key} was ${elapsedTime}ms ago`);
+        if (elapsedTime > expiredTime) {
           logger.info(`Cache expired for key: ${key}, fetching new data...`);
           return null;
         }
@@ -98,6 +92,7 @@ class AmbassadorService {
         throw new Error("URL has not been set");
       }
 
+      // Khi demo circuit breaker comment phần này
       const cachedData = await this.tryFetchDataFromCacheAndLogTime()
       if (cachedData) {
         return cachedData
@@ -105,8 +100,7 @@ class AmbassadorService {
 
       // Kiểm tra trạng thái của CircuitBreaker
       while (this.state === 'OPEN') {
-        logger.info("CircuitBreaker is OPEN, waiting for timeout...");
-        await new Promise(resolve => setTimeout(resolve, 200)); // Đợi 100ms rồi kiểm tra lại
+        await new Promise(resolve => setTimeout(resolve, 500)); // Đợi 500ms rồi kiểm tra lại
       }
   
       // Gọi dữ liệu từ remote khi trạng thái là CLOSED hoặc HALF-OPEN
@@ -150,7 +144,16 @@ class AmbassadorService {
 
     async tryFetchDataFromCacheAndLogTime() {
       const startTime = performance.now()
-      const cachedData = await this.getDataFromRedis(this.url);
+
+      let cachedData
+      // Nếu số lần OPEN vượt quá maxOpenRetries, trả về cache mới nhất
+      if (this.openCount >= this.maxOpenRetries) {
+        logger.warn(`CircuitBreaker has been OPEN ${this.openCount} times, remote server might be down, returning latest cache...`);
+        cachedData = await this.getDataFromRedis(this.url, TEN_MINUTES);
+      } else { // Chưa quá maxOpenRetries
+        cachedData = await this.getDataFromRedis(this.url);
+      }
+
       if (cachedData) {
         logger.info(`Cache hit for url: ${this.url}`);
         const duration = performance.now() - startTime;
@@ -165,7 +168,7 @@ class AmbassadorService {
         logger.info(`Fetching data from: ${this.url}`);
         // Giả lập tỷ lệ lỗi 60%
         const failProbability = Math.random();
-        if (failProbability < 0.6) {
+        if (failProbability >= 0) {
             logger.warn(`Simulated failure for url: ${this.url}`);
             throw new Error(`Simulated error fetching data from ${this.url}`);
         }
@@ -204,10 +207,12 @@ class AmbassadorService {
         // Reset số lần thành công và thất bại khi chuyển sang CLOSED
         this.successCount = 0;
         this.failureCount = 0;
+        this.openCount = 0;
       }
   
       if (newState === 'OPEN') {
         this.successCount = 0
+        this.openCount += 1;
         // Chờ thời gian timeout trước khi chuyển sang HALF-OPEN
         return new Promise(resolve => {
           setTimeout(async () => {

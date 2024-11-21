@@ -6,8 +6,8 @@ const EXTERNAL_FE_URL = 'https://portal.vietcombank.com.vn/Usercontrols/TVPortal
 const AMBASSADOR_URL = `http://ambassador:8080/fetchData?url=${EXTERNAL_FE_URL}`
 
 exports.getFERate = async (req, res, next) => {
-  const MAX_RETRIES = 5; // Số lần thử tối đa
-  const RETRY_DELAY = 10000; // 10 giây
+  const MAX_RETRIES = 10; // Số lần thử tối đa
+  const RETRY_DELAY = 20000; // 20 giây
 
   async function fetchData(retries = 0) {
     try {
