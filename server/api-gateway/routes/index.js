@@ -2,78 +2,67 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const jwt = require('jsonwebtoken');
-const CircuitBreaker = require('../services/circuitBreaker');
 const createBulkhead = require('../middleware/bulkhead');
 const config = require('../config/config');
 const rateLimit = require('express-rate-limit');
-
-// Khởi tạo circuit breakers
-const goldCircuitBreaker = new CircuitBreaker();
-const forexCircuitBreaker = new CircuitBreaker();
 
 // Rate limiters
 const goldRateLimiter = rateLimit(config.goldService.rateLimit);
 const forexRateLimiter = rateLimit(config.forexService.rateLimit);
 
 // Gold price endpoint
-router.get('/gold-price',
+router.get('/api/gold-price',
   goldRateLimiter,
   createBulkhead(config.goldService.maxConcurrent),
   async (req, res) => {
     try {
-      const result = await goldCircuitBreaker.executeRequest(async () => {
-        const response = await axios.get(`${config.goldService.url}/api/gold-price`, {
-          timeout: config.goldService.timeout
-        });
-        return response.data;
-      });
-      res.json(result);
-    } catch (error) {
-      console.error('Gold service error:', error.message);
-      res.status(500).json({ 
-        error: 'Gold service unavailable',
-        message: error.message 
-      });
-    } 
+      const response = await axios.get(`${config.goldService.url}/api/gold-price`)
+      res.json(response.data)
+    } catch(error) {
+      console.error("Error fetching API:", error);
+      res.status(500).send("Error fetching gold Price data fromd api-gold-price");
+    }
   }
 );
 
 // Forex rate endpoint
-router.get('/fe-rate',
+router.get('/api/fe-rate',
   forexRateLimiter,
   createBulkhead(config.forexService.maxConcurrent),
   async (req, res) => {
     try {
-      const result = await forexCircuitBreaker.executeRequest(async () => {
-        const response = await axios.get(`${config.forexService.url}/api/fe-rate`, {
-          timeout: config.forexService.timeout
-        });
-        return response.data;
-      });
-      res.json(result);
-    } catch (error) {
-      console.error('Forex service error:', error.message);
-      res.status(500).json({ 
-        error: 'Forex service unavailable',
-        message: error.message 
-      });
+      const response = await axios.get(`${config.forexService.url}/api/fe-rate`)
+      res.json(response.data)
+    } catch(error) {
+      console.error("Error fetching API:", error);
+      res.status(500).send("Error fetching FE RATE data from api-fe-rate");
     }
   }
 );
 
-// Health check endpoint
-router.get('/health', (req, res) => {
-  res.json({
-    goldService: {
-      circuitState: goldCircuitBreaker.state,
-      failures: goldCircuitBreaker.failures
-    },
-    forexService: {
-      circuitState: forexCircuitBreaker.state,
-      failures: forexCircuitBreaker.failures
+router.get('/test-endpoint', 
+  forexRateLimiter,
+  createBulkhead(config.forexService.maxConcurrent),
+  async (req, res) => {
+    try {
+      // Mô phỏng xử lý với độ trễ 1-2 giây
+      await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
+      
+      // Trả về JSON với dữ liệu ngẫu nhiên
+      res.json({
+        exchangeRate: Math.random() * 100, // tỷ giá ngẫu nhiên
+        timestamp: new Date().toISOString(),
+        requestId: Math.floor(Math.random() * 1000)
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+  }
+)
+
+// Base URL
+router.get('/', (req, res) => {
+  res.send('THIS IS API GATE WAY SERVER - HELLO')
 });
 
 

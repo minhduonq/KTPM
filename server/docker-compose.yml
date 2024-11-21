@@ -21,17 +21,6 @@ services:
     networks:
       - gateway
 
-  container-monitor:
-    build:
-      context: ./container-monitor
-      dockerfile: Dockerfile
-    ports:
-      - "3003:3003" 
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - gateway
-
   api-gateway:
     build: ./api-gateway
     ports:

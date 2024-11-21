@@ -2,7 +2,7 @@ const axios = require('axios');
 const services = {
     goldPrice: {
         name: "Gold Price Container's Service",
-        url: 'http://api-gold-price:4000/api/gold-price',
+        url: 'http://localhost:4000/api/gold-price',
         validate: (data) => {
             // Checking data structure to see if the data return is OK
             if(!Array.isArray(data)) return false;
@@ -19,7 +19,7 @@ const services = {
     },
     feRate: {
         name: "Foreign Exchange Rate Container's Service",
-        url: 'http://api-fe-rate:5000/api/fe-rate',
+        url: 'http://localhost:5000/api/fe-rate',
         validate: (data) => {
             if(!data.ExrateList) return false;
             if(!Array.isArray(data.ExrateList.Exrate)) return false;
