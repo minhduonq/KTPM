@@ -44,6 +44,7 @@ export default function Home() {
     <div>
       <h1>Container Usage Monitoring</h1>
       <ContainerUsageStream />
+      
     </div>
   );
 }

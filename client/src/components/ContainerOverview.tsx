@@ -48,6 +48,8 @@ const ContainerOverview = () => {
 
     useEffect(() => {
         fetchData();
+        const intervalId = setInterval(fetchData, 5000); // Tự động reload sau mỗi 5 giây
+        return () => clearInterval(intervalId); // Cleanup interval khi component bị unmount
     }, []);
 
     if (loading) return <div>Loading...</div>;

@@ -10,7 +10,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedOption }) => {
     return (
         <div className="w-64 h-screen bg-gray-800 text-white p-4">
             <div className="mb-4">
-                <img src="\partnership.svg" alt="Logo" className="w-full h-auto" /> {/* Thay thế đường dẫn tới logo của bạn */}
+                <img src="/logo.svg" alt="logo" className="w-full mx-auto" />
             </div>
             <ul className="space-y-2">
                 <li

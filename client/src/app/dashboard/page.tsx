@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/navbar';
 import GoldPrice from '@/components/goldPrice';
 import FERATE from '@/components/feRate';
-import Monitor from '../monitor/page';
 import ContainerOverview from "@/components/ContainerOverview";
 import EndpointStatus from "@/components/EndpointStatus";
 import axios from 'axios';
