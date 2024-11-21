@@ -40,7 +40,8 @@ services:
     volumes:
       - ./api-fe-rate:/usr/src/app
     networks:
-      - mynetwork
+      - gateway
+
   
   api-gold-price:
     build:
@@ -51,7 +52,22 @@ services:
     volumes:
       - ./api-gold-price:/usr/src/app
     networks:
-      - mynetwork
+      - gateway
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3005:3005"
+    environment:
+      PORT: 3005
+      GOLD_SERVICE_URL: http://api-gold-price:4000
+      FOREX_SERVICE_URL: http://api-fe-rate:5000
+    depends_on:
+      - api-gold-price
+      - api-fe-rate
+    networks:
+      - gateway
+
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -109,7 +125,7 @@ services:
 networks:
   monitoring:
     driver: bridge
-  mynetwork:
+  gateway:
     driver: bridge
 
 volumes:
