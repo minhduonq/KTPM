@@ -5,6 +5,7 @@ import GoldPrice from '@/components/goldPrice';
 import FERATE from '@/components/feRate';
 import ContainerOverview from "@/components/ContainerOverview";
 import EndpointStatus from "@/components/EndpointStatus";
+import ChartPage from '@/components/chartPage';
 import axios from 'axios';
 
 function Dashboard() {
@@ -45,6 +46,8 @@ function Dashboard() {
                 return <EndpointStatus />;
             case 'Container Status':
                 return <ContainerOverview />;
+            case 'VisitorsChart':
+                return <ChartPage />;
             default:
                 return (
                     <div>

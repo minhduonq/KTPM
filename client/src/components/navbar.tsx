@@ -55,6 +55,13 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedOption }) => {
                     <CogIcon className="h-5 w-5" />
                     Monitoring
                 </li>
+                <li
+                    className="p-2 hover:bg-gray-700 cursor-pointer flex items-center gap-2"
+                    onClick={() => setSelectedOption('VisitorsChart')}
+                >
+                    <ChartBarIcon className="h-5 w-5" />
+                    Visitors Chart
+                </li>
             </ul>
         </div>
     );
