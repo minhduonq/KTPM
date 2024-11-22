@@ -96,20 +96,5 @@ module.exports = class VisitTracker {
        }
     }
 
-    /*
-    static async getVisitPerDay() {
-        try {
-            const snapshot = await db.ref('/').get();
-            if(snapshot.exists()) {
-                return snapshot.val();
-            } else {
-                return null;
-            }
-        } catch(error) {
-            console.log("Error while getting visit for day:", day, "-", error);
-            return null;
-        }
-    }
-    */
 }
 

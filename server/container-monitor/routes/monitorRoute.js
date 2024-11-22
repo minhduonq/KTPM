@@ -7,6 +7,5 @@ const router = express.Router();
 router.get('/containers-status',con_stat_controller.Containers_Status)
 router.get('/endpoints-status', endpoint_stat_controller.Endpoint_Status)
 router.get('/visit-tracking', tracking_controller.visitTracking)
-//router.get('/visits', tracking_controller.getAllVisitAndDay)
 
 module.exports = router;

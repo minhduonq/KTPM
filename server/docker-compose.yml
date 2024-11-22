@@ -20,7 +20,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - mynetwork
+      - gateway
 
   redis:
     image: redis:latest
@@ -31,7 +31,7 @@ services:
       - redis-data:/data
     restart: always
     networks:
-      - mynetwork
+      - gateway
 
   api-fe-rate:
     build:

@@ -46,18 +46,3 @@ exports.visitTracking = (req, res) => {
     }
 }
 
-/*
-exports.getAllVisitAndDay = async (req,res) => {
-    const data = await visitTrackingModel.getVisitPerDay();
-    const result = Object.keys(data).map(date => {
-        const hourlyData = Object.keys(data[date]).map(hour => ({
-          hour: hour,
-          visitors: data[date][hour].visitors
-        }));
-        
-        return { date: date, hourlyData: hourlyData };
-    });
-    //console.log(JSON.stringify(result, null, 2));
-    res.json(result);
-}
-*/

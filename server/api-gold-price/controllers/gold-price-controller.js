@@ -1,12 +1,4 @@
-const gpModel = require('../models/goldPriceModel')
 const axios = require('axios')
-const {exec} = require('child_process');
-/*
-exports.setGoldPrice = (req,res,next) => {
-    const {goldPrice} = req.body;
-    gpModel.addGoldPrice(1,goldPrice);
-}
-*/
 
 const EXTERNAL_GOLD_URL = 'https://sjc.com.vn/GoldPrice/Services/PriceService.ashx'
 const AMBASSADOR_URL = `http://ambassador:8080/fetchData?url=${EXTERNAL_GOLD_URL}`
