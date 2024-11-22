@@ -29,6 +29,8 @@ const EndpointStatus = () => {
 
     useEffect(() => {
         fetchEndpointStatus();
+        const intervalId = setInterval(fetchEndpointStatus, 5000); // Tự động reload sau mỗi 5 giây
+        return () => clearInterval(intervalId); // Cleanup interval khi component bị unmount
     }, []);
 
     if (loading) return <div>Loading...</div>;
