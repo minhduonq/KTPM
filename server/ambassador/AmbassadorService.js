@@ -166,12 +166,13 @@ class AmbassadorService {
   
     async tryFetchDataFromURL() {      
         logger.info(`Fetching data from: ${this.url}`);
-        // Giả lập tỷ lệ lỗi 60%
+        /* Giả lập tỷ lệ lỗi 60%
         const failProbability = Math.random();
         if (failProbability >= 0) {
             logger.warn(`Simulated failure for url: ${this.url}`);
             throw new Error(`Simulated error fetching data from ${this.url}`);
         }
+        */
         const response = await axios.get(this.url)
         logger.info(`Data fetched successfully!`)
       

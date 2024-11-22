@@ -47,6 +47,7 @@ function FERATE() {
     return (
         <div className='px-5'>
             <h2 className='text-2xl font-bold mb-4'>Foreign Exchange Rate</h2>
+            <p className='text-md mb-4 font-bold'>Latest Update: {ferate_value?.DateTime[0]}</p>
             <hr className="border-t border-gray-300 mb-4" />
             <div style={{ overflowY: 'auto', maxHeight: '95vh' }}>
                 <table className='min-w-full bg-white border border-gray-200 mt-4'>
