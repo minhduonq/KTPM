@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { HomeIcon, CurrencyDollarIcon, ChartBarIcon, ServerIcon, CogIcon } from '@heroicons/react/24/outline'; // Import các icon từ Heroicons
-
+import { FaDocker } from "react-icons/fa";
 interface SidebarProps {
     setSelectedOption: (option: string) => void;
 }
@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedOption }) => {
                     className="p-2 hover:bg-gray-700 cursor-pointer flex items-center gap-2"
                     onClick={() => setSelectedOption('Container Status')}
                 >
-                    <ChartBarIcon className="h-5 w-5" />
+                    <FaDocker className="h-5 w-5" />
                     Container Status
                 </li>
                 <li
