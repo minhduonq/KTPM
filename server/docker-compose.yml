@@ -12,6 +12,11 @@ services:
       - /dev/disk/:/dev/disk:ro
     networks:
       - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
   ambassador:
     build:
@@ -21,6 +26,11 @@ services:
       - "8080:8080"
     networks:
       - gateway
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
   redis:
     image: redis:latest
@@ -32,6 +42,11 @@ services:
     restart: always
     networks:
       - gateway
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
   api-fe-rate:
     build:
@@ -43,8 +58,12 @@ services:
       - ./api-fe-rate:/usr/src/app
     networks:
       - gateway
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
-  
   api-gold-price:
     build:
       context: ./api-gold-price
@@ -55,6 +74,11 @@ services:
       - ./api-gold-price:/usr/src/app
     networks:
       - gateway
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
   api-gateway:
     build: ./api-gateway
@@ -69,7 +93,11 @@ services:
       - api-fe-rate
     networks:
       - gateway
-
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -88,6 +116,11 @@ services:
       - "9100:9100"
     networks:
       - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
   prometheus:
     image: prom/prometheus:latest
@@ -106,6 +139,11 @@ services:
       - "9090:9090"
     networks:
       - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '512M'
 
   grafana:
     image: grafana/grafana:latest
@@ -123,6 +161,11 @@ services:
       - monitoring
     depends_on:
       - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '256M'
 
 networks:
   monitoring:

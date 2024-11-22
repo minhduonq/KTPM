@@ -8,6 +8,7 @@ interface Endpoint {
     name: string;
     url: string;
     status: string;
+    message: string;
     checkedAt: string;
 }
 
@@ -29,7 +30,7 @@ const EndpointStatus = () => {
 
     useEffect(() => {
         fetchEndpointStatus();
-        const intervalId = setInterval(fetchEndpointStatus, 5000); // Tự động reload sau mỗi 5 giây
+        const intervalId = setInterval(fetchEndpointStatus, 30000); // Tự động reload sau mỗi 10 giây
         return () => clearInterval(intervalId); // Cleanup interval khi component bị unmount
     }, []);
 
@@ -48,30 +49,30 @@ const EndpointStatus = () => {
             <table className="min-w-full bg-white border border-gray-200 rounded-lg">
                 <thead>
                     <tr className="bg-gray-200 rounded-t-lg">
-                        <th className="py-2 px-4 border-b">ID</th>
-                        <th className="py-2 px-4 border-b">Name</th>
-                        <th className="py-2 px-4 border-b">URL</th>
-                        <th className="py-2 px-4 border-b">Status</th>
-                        <th className="py-2 px-4 border-b">Checked At</th>
+                        <th className="py-2 px-4 border-b text-center">Name</th>
+                        <th className="py-2 px-4 border-b text-center">URL</th>
+                        <th className="py-2 px-4 border-b text-center">Status</th>
+                        <th className="py-2 px-4 border-b text-center">Message</th>
+                        <th className="py-2 px-4 border-b text-center">Checked At</th>
                     </tr>
                 </thead>
                 <tbody>
                     {endpoints.map((endpoint) => (
                         <tr key={endpoint.id} className="bg-white border-b">
-                            <td className="py-2 px-4">{endpoint.id}</td>
-                            <td className="py-2 px-4">{endpoint.name}</td>
-                            <td className="py-2 px-4">{endpoint.url}</td>
-                            <td className="py-2 px-4 flex items-center gap-2">
+                            <td className="py-2 px-4 text-center align-middle">{endpoint.name}</td>
+                            <td className="py-2 px-4 text-center align-middle">{endpoint.url}</td>
+                            <td className="py-2 px-4 flex items-center gap-2 text-center align-middle">
                                 <span
                                     className={
-                                        endpoint.status === 'error'
+                                        endpoint.status !== 'healthy'
                                             ? 'w-3 h-3 rounded-full bg-red-500'
                                             : 'w-3 h-3 rounded-full bg-green-500'
                                     }
                                 ></span>
                                 <span>{endpoint.status}</span>
                             </td>
-                            <td className="py-2 px-4">{endpoint.checkedAt}</td>
+                            <td className="py-2 px-4 text-center align-middle"> <span className={endpoint.status !== 'healthy' ? 'text-red-500': 'text-green-500'}>{endpoint.message}</span></td>
+                            <td className="py-2 px-4 text-center align-middle">{endpoint.checkedAt}</td>
                         </tr>
                     ))}
                 </tbody>
