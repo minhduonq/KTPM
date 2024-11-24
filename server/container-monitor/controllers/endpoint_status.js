@@ -3,17 +3,31 @@ const services = {
     goldPrice: {
         name: "Gold Price Container's Service",
         url: 'http://localhost:4000/api/gold-price',
-        validate: (data) => {
-            // Checking data structure to see if the data return is OK
-            if(!Array.isArray(data)) return false;
-            if(data.length === 0) return false;
+        validate: (response) => {
+            // Check if response has success and data properties
+            if (
+                !response ||
+                typeof response !== "object" ||
+                !response.success ||
+                !Array.isArray(response.data)
+            ) {
+                return false;
+            }
 
-            const sampleItem = data[0];
-            const requiredFields = ['type', 'buy', 'sell'];
-            return requiredFields.every(field => 
-                sampleItem.hasOwnProperty(field) &&
-                sampleItem[field] !== null &&
-                sampleItem !== undefined
+            // Check if the data array is not empty
+            if (response.data.length === 0) {
+                return false;
+            }
+
+            // Check required fields in each item of the data array
+            const requiredFields = ["Id", "TypeName", "BranchName", "Buy", "Sell"];
+            return response.data.every((item) =>
+                requiredFields.every(
+                    (field) =>
+                        item.hasOwnProperty(field) &&
+                        item[field] !== null &&
+                        item[field] !== undefined
+                )
             );
         }
     },
@@ -21,14 +35,14 @@ const services = {
         name: "Foreign Exchange Rate Container's Service",
         url: 'http://localhost:5000/api/fe-rate',
         validate: (data) => {
-            if(!data.ExrateList) return false;
-            if(!Array.isArray(data.ExrateList.Exrate)) return false;
+            if (!data.ExrateList) return false;
+            if (!Array.isArray(data.ExrateList.Exrate)) return false;
 
             const sampleItem = data.ExrateList.Exrate[0].$;
             const requireFields = ['CurrencyCode', 'CurrencyName', 'Buy', 'Transfer', 'Sell'];
-            return requireFields.every(field => 
-                sampleItem.hasOwnProperty(field) && 
-                sampleItem[field] !== null && 
+            return requireFields.every(field =>
+                sampleItem.hasOwnProperty(field) &&
+                sampleItem[field] !== null &&
                 sampleItem[field] !== undefined
             )
         }
@@ -37,9 +51,9 @@ const services = {
 
 async function checkServiceHealth(service) {
     try {
-        const response = await axios.get(service.url, {timeout: 5000});
+        const response = await axios.get(service.url, { timeout: 5000 });
         // case 1: service return data but wrong format
-        if(!service.validate(response.data)) {
+        if (!service.validate(response.data)) {
             return {
                 status: 'degraded',
                 availability: 'up',
@@ -52,7 +66,7 @@ async function checkServiceHealth(service) {
             availability: 'up',
             message: 'Service is working normally',
         };
-    } catch(error) {
+    } catch (error) {
         // Trường hợp 3: Không thể kết nối đến service
         if (error.code === 'ECONNREFUSED') {
             return {
@@ -69,7 +83,7 @@ async function checkServiceHealth(service) {
                 message: 'Can not get data from third party services in ' + service.name,
             };
         }
-        
+
         // Các lỗi khác
         return {
             status: 'error',
@@ -79,22 +93,27 @@ async function checkServiceHealth(service) {
     }
 }
 
-exports.Endpoint_Status = async (req,res) => {
+exports.Endpoint_Status = async (req, res) => {
     try {
+        const now = new Date();
+        const date = now.toLocaleDateString('en-GB'); 
+        const time = now.toLocaleTimeString('en-US', { hour12: true }); // "10:30:21 PM"
         const statusPromises = Object.entries(services).map(async ([id, service]) => {
-          const health = await checkServiceHealth(service);
-          return {
-            id,
-            name: service.name,
-            url: service.url,
-            ...health,
-            checkedAt: new Date().toISOString()
-          };
+            const health = await checkServiceHealth(service);
+            return {
+                id,
+                name: service.name,
+                url: service.url,
+                ...health,
+                checkedAt: `${date} ${time}`
+            };
         });
-    
+
         const statuses = await Promise.all(statusPromises);
         res.json(statuses);
-      } catch (error) {
+    } catch (error) {
         res.status(500).json({ error: 'Lỗi server' });
     }
 }
+
+

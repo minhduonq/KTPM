@@ -1,9 +1,6 @@
-
-
 'use client';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-
 type Exrate = {
     $: {
         CurrencyCode: string;
@@ -45,7 +42,7 @@ function FERATE() {
     if (error) return <div>{error}</div>;
 
     return (
-        <div className='mt-8'>
+        <div className='mt-8' style={{ overflowY: 'auto', maxHeight: '100vh' }}>
             <p className='font-bold border-b border-slate-400'>
                 Cập nhật vào: {ferate_value?.DateTime[0]}
             </p>

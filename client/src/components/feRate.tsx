@@ -28,7 +28,7 @@ function FERATE() {
     useEffect(() => {
         const fetchFERate = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/fe-rate');
+                const response = await axios.get('http://localhost:3005/api/fe-rate');
                 setFERate(response.data.ExrateList);
             } catch (error) {
                 console.error('Error fetching exchange rates:', error);
@@ -45,11 +45,11 @@ function FERATE() {
     if (error) return <div>{error}</div>;
 
     return (
-        <div className='mt-8'>
-            <p className='font-bold border-b border-slate-400'>
-                Cập nhật vào: {ferate_value?.DateTime[0]}
-            </p>
-            <div style={{ overflowY: 'auto', maxHeight: '500px' }}>
+        <div className='px-5'>
+            <h2 className='text-2xl font-bold mb-4'>Foreign Exchange Rate</h2>
+            <p className='text-md mb-4 font-bold'>Latest Update: {ferate_value?.DateTime[0]}</p>
+            <hr className="border-t border-gray-300 mb-4" />
+            <div style={{ overflowY: 'auto', maxHeight: '95vh' }}>
                 <table className='min-w-full bg-white border border-gray-200 mt-4'>
                     <thead>
                         <tr className='bg-gray-200'>
